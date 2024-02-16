@@ -19,17 +19,28 @@ export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, 
 
   const timeOfGame = gameDurationMinutes * 60 + gameDurationSeconds;
 
-  const { hintOpenCards, addMode } = useContext(ModeContext);
-  const [dataNewLeader, setDataNewLeader] = useState({ name: "Пользователь", time: timeOfGame, achievements: [] });
+  const { hintOpenCards, addMode, hintOpenPairCards, setHintOpenCards, setHintOpenPairCards } = useContext(ModeContext);
+  const achievementsPlayer = [];
+  if (addMode === false) {
+    achievementsPlayer.push(1);
+  }
+  if (hintOpenCards === false && hintOpenPairCards === false) {
+    achievementsPlayer.push(2);
+  }
+  const [dataNewLeader, setDataNewLeader] = useState({
+    name: "Пользователь",
+    time: timeOfGame,
+    achievements: achievementsPlayer,
+  });
   const { leadersList, setLeadersList } = useContext(LeaderBoardContext);
   const [isNewLeader, setIsNewLeader] = useState(timeOfGame < leadersList[leadersList.length - 1].time && hardLevel);
   const navigate = useNavigate(null);
 
   const addNewLeader = async () => {
-    console.log(addMode);
-    if (!hintOpenCards) setDataNewLeader({ ...dataNewLeader, achievements: [1] });
     await postLeaders({ dataNewLeader }, setLeadersList);
     await setIsNewLeader(false);
+    setHintOpenCards(false);
+    setHintOpenPairCards(false);
     navigate("/");
   };
 

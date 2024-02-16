@@ -63,8 +63,6 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   function finishGame(status = STATUS_LOST) {
     setGameEndDate(new Date());
     setStatus(status);
-    setHintOpenCards(false);
-    setHintOpenPairCards(false);
   }
   function startGame() {
     const startDate = new Date();
@@ -72,6 +70,8 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setGameStartDate(startDate);
     setTimer(getTimerValue(startDate, null));
     setStatus(STATUS_IN_PROGRESS);
+    setHintOpenCards(false);
+    setHintOpenPairCards(false);
   }
   function resetGame() {
     setGameStartDate(null);
