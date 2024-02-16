@@ -199,7 +199,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     };
   }, [gameStartDate, gameEndDate, setAttempt]);
 
-  function clickHandler() {
+  function openEyeHint() {
     if (hintOpenCards) return;
     freezeTimer();
     setHintOpenCards(true);
@@ -230,12 +230,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         </div>
         {status === STATUS_IN_PROGRESS && (
           <div className={styles.headerImages}>
-            <div
-              className={styles.headerImgEye}
-              onClick={() => {
-                if (!hintOpenCards) return clickHandler();
-              }}
-            >
+            <div className={styles.headerImgEye} onClick={openEyeHint}>
               <img src={eyeImageUrl} alt="ничего нет" />
               <div className={styles.descriptionEyeImage}>
                 <h2>Прозрение</h2>
