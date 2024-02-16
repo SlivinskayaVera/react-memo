@@ -32,6 +32,7 @@ function getTimerValue(startDate, endDate) {
   const diffInSecconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
   const minutes = Math.floor(diffInSecconds / 60);
   const seconds = diffInSecconds % 60;
+
   return {
     minutes,
     seconds,
@@ -50,20 +51,20 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   // Текущий статус игры
   const [status, setStatus] = useState(STATUS_PREVIEW);
 
-  // Дата начала игры
   const [gameStartDate, setGameStartDate] = useState(null);
-  // Дата конца игры
   const [gameEndDate, setGameEndDate] = useState(null);
 
-  // Стейт для таймера, высчитывается в setInteval на основе gameStartDate и gameEndDate
   const [timer, setTimer] = useState({
     seconds: 0,
     minutes: 0,
   });
 
+  const [hintOpenCards, setHintOpenCards] = useState(false);
+
   function finishGame(status = STATUS_LOST) {
     setGameEndDate(new Date());
     setStatus(status);
+    setHintOpenCards(false);
   }
   function startGame() {
     const startDate = new Date();
@@ -75,8 +76,18 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   function resetGame() {
     setGameStartDate(null);
     setGameEndDate(null);
+    setHintOpenCards(false);
     setTimer(getTimerValue(null, null));
     setStatus(STATUS_PREVIEW);
+  }
+
+  function freezeTimer() {
+    const freeTime = new Date(gameStartDate.getTime() + 5000);
+    setGameStartDate(new Date());
+
+    setTimeout(() => {
+      setGameStartDate(freeTime);
+    }, 5000);
   }
 
   /**
@@ -188,6 +199,12 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     };
   }, [gameStartDate, gameEndDate, setAttempt]);
 
+  function clickHandler() {
+    if (hintOpenCards) return;
+    freezeTimer();
+    setHintOpenCards(true);
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -213,11 +230,20 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         </div>
         {status === STATUS_IN_PROGRESS && (
           <div className={styles.headerImages}>
-            <div className={styles.headerImgEye}>
+            <div
+              className={styles.headerImgEye}
+              onClick={() => {
+                if (!hintOpenCards) return clickHandler();
+              }}
+            >
               <img src={eyeImageUrl} alt="ничего нет" />
               <div className={styles.descriptionEyeImage}>
                 <h2>Прозрение</h2>
-                <p>На 5 секунд показываются все карты. Таймер длительности игры на это время останавливается.</p>
+                {hintOpenCards ? (
+                  <p>Вы уже потратили подсказку</p>
+                ) : (
+                  <p>На 5 секунд показываются все карты. Таймер длительности игры на это время останавливается.</p>
+                )}
               </div>
             </div>
             <div className={styles.headerImgCards}>
