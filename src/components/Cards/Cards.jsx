@@ -45,7 +45,8 @@ function getTimerValue(startDate, endDate) {
  * previewSeconds - сколько секунд пользователь будет видеть все карты открытыми до начала игры
  */
 export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
-  const { addMode, attempt, setAttempt } = useContext(ModeContext);
+  const { addMode, attempt, setAttempt, hintOpenCards, setHintOpenCards, setHintOpenPairCards, hintOpenPairCards } =
+    useContext(ModeContext);
   // В cards лежит игровое поле - массив карт и их состояние открыта\закрыта
   const [cards, setCards] = useState([]);
   // Текущий статус игры
@@ -59,12 +60,11 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     minutes: 0,
   });
 
-  const [hintOpenCards, setHintOpenCards] = useState(false);
-
   function finishGame(status = STATUS_LOST) {
     setGameEndDate(new Date());
     setStatus(status);
     setHintOpenCards(false);
+    setHintOpenPairCards(false);
   }
   function startGame() {
     const startDate = new Date();
@@ -77,16 +77,22 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setGameStartDate(null);
     setGameEndDate(null);
     setHintOpenCards(false);
+    setHintOpenPairCards(false);
     setTimer(getTimerValue(null, null));
     setStatus(STATUS_PREVIEW);
   }
 
-  function freezeTimer() {
-    const freeTime = new Date(gameStartDate.getTime() + 5000);
+  function freezeTimer(freezeListCards) {
+    const freezeTime = new Date(gameStartDate.getTime() + 5000);
     setGameStartDate(new Date());
 
     setTimeout(() => {
-      setGameStartDate(freeTime);
+      setGameStartDate(freezeTime);
+      const returnCards = cards.map((card, index) => {
+        card.open = freezeListCards[index];
+        return card;
+      });
+      setCards(returnCards);
     }, 5000);
   }
 
@@ -201,8 +207,45 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
   function openEyeHint() {
     if (hintOpenCards) return;
-    freezeTimer();
+    const freezeListCards = [];
+    const openedCards = cards.map(card => {
+      freezeListCards.push(card.open);
+      return {
+        ...card,
+        open: true,
+      };
+    });
+    setCards(openedCards);
+
+    freezeTimer(freezeListCards);
     setHintOpenCards(true);
+  }
+
+  function randomInteger(min, max) {
+    // случайное число от min до (max+1)
+    let rand = min + Math.random() * (max + 1 - min);
+    return Math.floor(rand);
+  }
+
+  function openPairCardsHint() {
+    if (hintOpenPairCards) return;
+    setHintOpenPairCards(true);
+    const onlyClosedCards = cards.filter(card => card.open === false);
+    if (onlyClosedCards.length <= 2) {
+      alert("На поле остались две карты, они точно одинаковые, ты почти выиграл :)");
+      return;
+    }
+    const index = randomInteger(0, onlyClosedCards.length - 1);
+    const randomCard = onlyClosedCards[index];
+    const randomOpenCards = cards.map(card => {
+      if (card.rank === randomCard.rank && card.suit === randomCard.suit && card.open === false)
+        return {
+          ...card,
+          open: true,
+        };
+      return card;
+    });
+    setCards(randomOpenCards);
   }
 
   return (
@@ -241,11 +284,11 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
                 )}
               </div>
             </div>
-            <div className={styles.headerImgCards}>
+            <div className={styles.headerImgCards} onClick={openPairCardsHint}>
               <img src={cardsImageUrl} alt="ничего нет" />
               <div className={styles.descriptionCardsImage}>
                 <h2>Алохомора</h2>
-                <p>Открывается случайная пара карт.</p>
+                {hintOpenPairCards ? <p>Вы уже потратили подсказку</p> : <p>Открывается случайная пара карт.</p>}
               </div>
             </div>
           </div>

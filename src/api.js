@@ -1,5 +1,7 @@
+const URL_API_LEADERBOARD = "https://wedev-api.sky.pro/api/v2/leaderboard";
+
 export async function getLeaders({ setLeadersList }) {
-  const response = await fetch("https://wedev-api.sky.pro/api/leaderboard", {
+  const response = await fetch(URL_API_LEADERBOARD, {
     method: "GET",
   });
 
@@ -14,8 +16,12 @@ export async function getLeaders({ setLeadersList }) {
 }
 
 export async function postLeaders({ dataNewLeader }, setLeadersList) {
-  const response = await fetch("https://wedev-api.sky.pro/api/leaderboard", {
-    body: JSON.stringify({ name: dataNewLeader.name, time: dataNewLeader.time }),
+  const response = await fetch(URL_API_LEADERBOARD, {
+    body: JSON.stringify({
+      name: dataNewLeader.name,
+      time: dataNewLeader.time,
+      achievements: dataNewLeader.achievements,
+    }),
     method: "POST",
   });
 

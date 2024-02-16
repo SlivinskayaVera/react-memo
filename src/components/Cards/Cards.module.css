@@ -44,46 +44,16 @@
   top: 10px;
 }
 
-.headerImgEye {
+.headerImgEye, .headerImgCards {
   display: flex;
   align-items: center;
   position: relative;
 }
 
-.descriptionEyeImage {
+.descriptionEyeImage, .descriptionCardsImage {
   display: none;
   position: absolute;
   top: 55px;
-  z-index: 1;
-  right: -90px;
-  border-radius: 12px;
-  width: 222px;
-  background: #c2f5ff;
-  align-items: center;
-  text-align: center;
-  padding: 5px;
-
-  h2 {
-    font-weight: 700;
-    font-size: 18px;
-    line-height: 133%;
-    text-align: center;
-    color: #004980;
-  }
-
-  p {
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 133%;
-    text-align: center;
-    color: #004980;
-  }
-}
-
-.descriptionCardsImage {
-  display: none;
-  position: absolute;
-  /* top: 55px; */
   z-index: 1;
   right: -90px;
   border-radius: 12px;
