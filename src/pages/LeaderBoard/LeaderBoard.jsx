@@ -34,8 +34,14 @@ export function LeaderBoard() {
             <p className={styles.textRowLeader}>{`#${index + 1}`}</p>
             <p className={styles.textRowLeader}>{leader.name}</p>
             <div className={styles.achievements}>
-              <img src={leader.achievements.includes(1) ? hardLevelGameOff : hardLevelGameOn} alt=""></img>
-              <img src={leader.achievements.includes(2) ? gameWithHintsOff : gameWithHintsOn} alt=""></img>
+              <div className={styles.achieve}>
+                <img src={leader.achievements.includes(1) ? hardLevelGameOff : hardLevelGameOn} alt=""></img>
+                {leader.achievements.includes(1) && <div className={styles.descriptionHardLevel}> </div>}
+              </div>
+              <div className={styles.achieve}>
+                <img src={leader.achievements.includes(2) ? gameWithHintsOff : gameWithHintsOn} alt=""></img>
+                {leader.achievements.includes(2) && <div className={styles.descriptionGameWithAchieve}> </div>}
+              </div>
             </div>
             <p className={styles.textRowLeader}>{`${minutes}:${seconds}`}</p>
           </div>
