@@ -55,7 +55,7 @@
 .descriptionEyeImage, .descriptionCardsImage {
   display: none;
   position: absolute;
-  top: 55px;
+  top: 80px;
   z-index: 1;
   right: -90px;
   border-radius: 12px;
