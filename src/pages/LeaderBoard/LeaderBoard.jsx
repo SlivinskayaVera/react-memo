@@ -2,6 +2,10 @@ import { Link } from "react-router-dom";
 import styles from "./LeaderBoard.module.css";
 import { useContext } from "react";
 import { LeaderBoardContext } from "../../components/LeaderBoardProvider/LeaderBoardProvider";
+import gameWithHintsOn from "./images/gameWithHintsOn.svg";
+import gameWithHintsOff from "./images/gameWithHintsOff.svg";
+import hardLevelGameOff from "./images/hardLevelGameOff.svg";
+import hardLevelGameOn from "./images/hardLevelGameOn.svg";
 
 export function LeaderBoard() {
   const { leadersList } = useContext(LeaderBoardContext);
@@ -29,7 +33,16 @@ export function LeaderBoard() {
           <div key={leader.id} className={styles.row}>
             <p className={styles.textRowLeader}>{`#${index + 1}`}</p>
             <p className={styles.textRowLeader}>{leader.name}</p>
-            <p className={styles.textRowLeader}>{`${minutes}:${seconds}`}</p>
+            <div className={styles.achievements}>
+              <div className={styles.achieve}>
+                <img src={leader.achievements.includes(1) ? hardLevelGameOff : hardLevelGameOn} alt=""></img>
+                {leader.achievements.includes(1) && <div className={styles.descriptionHardLevel}> </div>}
+              </div>
+              <div className={styles.achieve}>
+                <img src={leader.achievements.includes(2) ? gameWithHintsOff : gameWithHintsOn} alt=""></img>
+                {leader.achievements.includes(2) && <div className={styles.descriptionGameWithAchieve}> </div>}
+              </div>
+            </div>
             <p className={styles.textRowLeader}>{`${minutes}:${seconds}`}</p>
           </div>
         );

@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { postLeaders } from "../../api";
 import { useContext, useState } from "react";
 import { LeaderBoardContext } from "../LeaderBoardProvider/LeaderBoardProvider";
+import { ModeContext } from "../../ModeProvider/ModeProvider";
 
 export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, hardLevel, onClick }) {
   const title = isWon ? "Вы победили!" : "Вы проиграли!";
@@ -18,7 +19,19 @@ export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, 
 
   const timeOfGame = gameDurationMinutes * 60 + gameDurationSeconds;
 
-  const [dataNewLeader, setDataNewLeader] = useState({ name: "Пользователь", time: timeOfGame });
+  const { hintOpenCards, addMode, hintOpenPairCards, setHintOpenCards, setHintOpenPairCards } = useContext(ModeContext);
+  const achievementsPlayer = [];
+  if (addMode === false) {
+    achievementsPlayer.push(1);
+  }
+  if (hintOpenCards === false && hintOpenPairCards === false) {
+    achievementsPlayer.push(2);
+  }
+  const [dataNewLeader, setDataNewLeader] = useState({
+    name: "Пользователь",
+    time: timeOfGame,
+    achievements: achievementsPlayer,
+  });
   const { leadersList, setLeadersList } = useContext(LeaderBoardContext);
   const [isNewLeader, setIsNewLeader] = useState(timeOfGame < leadersList[leadersList.length - 1].time && hardLevel);
   const navigate = useNavigate(null);
@@ -26,6 +39,8 @@ export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, 
   const addNewLeader = async () => {
     await postLeaders({ dataNewLeader }, setLeadersList);
     await setIsNewLeader(false);
+    setHintOpenCards(false);
+    setHintOpenPairCards(false);
     navigate("/");
   };
 
